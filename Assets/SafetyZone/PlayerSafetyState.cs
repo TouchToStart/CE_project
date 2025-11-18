@@ -6,7 +6,7 @@ public class PlayerSafetyState : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("SafetyZone"))
         {
             isInSafetyZone = true;
         }
