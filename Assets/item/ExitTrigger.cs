@@ -1,48 +1,40 @@
-// using UnityEngine;
-
-// public class ExitTrigger : MonoBehaviour
-// {
-//     private void OnTriggerEnter(Collider other)
-//     {
-//         if (other.CompareTag("Player"))
-//         {
-//             Debug.Log("탈출 성공!");
-//         }
-//     }
-// }
-
-
-
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ExitTrigger : MonoBehaviour
 {
     private bool playerInside = false;
     private ItemCollector collector;
 
+    public string escapeSceneName = "EscapeScene"; // 이동할 씬 이름
+
     void Start()
     {
-        collector = GameObject.FindGameObjectWithTag("Player").GetComponent<ItemCollector>();
+        // Player 오브젝트에서 ItemCollector 가져오기
+        collector = GameObject.FindGameObjectWithTag("Player")
+                              .GetComponent<ItemCollector>();
     }
 
     void Update()
     {
-        if (playerInside && Input.GetKeyDown(KeyCode.R))
+        if (playerInside && Input.GetKeyDown(KeyCode.E))
         {
-            if (collector.AllCollected())
+            if (collector.HasEnoughItems())
             {
-                Debug.Log("Clear! 모든 아이템을 모았습니다!");
-#if UNITY_EDITOR
-                UnityEditor.EditorApplication.isPlaying = false;
-#else
-                Application.Quit();
-#endif
+                Debug.Log("탈출 성공! 씬 이동");
+                GoToEscapeScene();
             }
             else
             {
-                Debug.Log("아직 아이템을 다 모으지 않았습니다!");
+                int need = collector.requiredCount - collector.collected;
+                Debug.Log("아이템이 부족합니다! (앞으로 " + need + "개 더 필요)");
             }
         }
+    }
+
+    void GoToEscapeScene()
+    {
+        SceneManager.LoadScene(escapeSceneName);
     }
 
     private void OnTriggerEnter(Collider other)
